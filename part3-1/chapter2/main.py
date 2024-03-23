@@ -1,7 +1,12 @@
-from flask import Flask, make_response, request
+from flask import Flask, make_response, request, session
 import datetime
-
+import os
 app = Flask(__name__)
+
+# 启用session
+app.config['SECRET_KEY'] = os.urandom(24) #生成随机数种子,用于生成sessionId
+
+
 
 @app.route("/",methods=['GET'])
 def hello_world():
@@ -48,6 +53,26 @@ def delete_cookie():
         print(k, v)
         response.delete_cookie(k)
     return response
+
+
+# 添加session
+@app.route("/add_session")
+def add_session():  # 存储在了内存中
+    session['username'] = 'dazhoulaoshi'
+    session['nickname'] = 'zhouge'
+    session['role'] = 'admin'
+    return 'session设置成功'
+
+@app.route("/get_session")
+def get_session():
+    print(session)
+    username = session.get("username")
+    return"session获取成功"+ username
+
+@app.route("/del_session")
+def delete_session():
+    session.clear()
+    return"session清除成功"
 
 
 if __name__ == "__main__":
